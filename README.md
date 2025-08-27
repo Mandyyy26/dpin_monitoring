@@ -17,7 +17,7 @@ This project provides a distributed network of validators that continuously moni
 
 ## 🏗️ Architecture
 
-````text
+```text
                 ┌─────────────┐
                 │   Frontend  │
                 └──────┬──────┘
@@ -38,20 +38,20 @@ This project provides a distributed network of validators that continuously moni
 │  Validator  │ ...             │  Validator  │
 └─────────────┘                 └─────────────┘
 
+```
 
 ## Monorepo Structure
 
 apps/
- ├── api         # Express API for CRUD + queries
- ├── frontend    # React/Next.js dashboard
- ├── hub         # WebSocket hub server
- └── validator   # Independent node client
+├── api # Express API for CRUD + queries
+├── frontend # React/Next.js dashboard
+├── hub # WebSocket hub server
+└── validator # Independent node client
 packages/
- ├── common      # Shared types/interfaces
- ├── db          # Prisma schema + client
- ├── eslint-config / typescript-config
- └── ui          # Shared UI components
-
+├── common # Shared types/interfaces
+├── db # Prisma schema + client
+├── eslint-config / typescript-config
+└── ui # Shared UI components
 
 ## ⚡ Features
 
@@ -67,12 +67,14 @@ packages/
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - [Bun](https://bun.sh/) or Node.js
 - Docker + Docker Compose (for Postgres)
 - Prisma CLI
 
 ### 1. Clone and install
-```bash
+
+````bash
 git clone https://github.com/your-org/dpin-uptime.git
 cd dpin-uptime
 bun install
