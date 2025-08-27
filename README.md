@@ -1,135 +1,162 @@
-# Turborepo starter
+# 🌐 Decentralized Uptime Monitoring System
 
-This Turborepo starter is maintained by the Turborepo core team.
+A decentralized uptime monitoring system where validators across the globe check website health and report status to a central hub for **real-time tracking, analytics, and reliability monitoring**.
 
-## Using this example
+---
 
-Run the following command:
+## 📖 Overview
 
-```sh
-npx create-turbo@latest
-```
+This project provides a distributed network of validators that continuously monitor websites' availability and performance.
 
-## What's inside?
+- **Hub**: Orchestrates tasks, assigns websites to validators, and records results in the database.
+- **Validators**: Independent nodes that fetch and validate website responses, sign results, and send them back to the Hub.
+- **API**: REST API for CRUD operations on monitored websites and retrieving uptime status.
+- **Frontend**: Real-time dashboard for visualizing website health.
 
-This Turborepo includes the following packages/apps:
+---
 
-### Apps and Packages
+## 🏗️ Architecture
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+````text
+                ┌─────────────┐
+                │   Frontend  │
+                └──────┬──────┘
+                       │ REST
+                       ▼
+                ┌─────────────┐
+                │     API     │
+                └──────┬──────┘
+                       │ Prisma/Postgres
+                       ▼
+                ┌─────────────┐
+                │    Hub      │
+                └──────┬──────┘
+             WebSocket │
+       ┌───────────────┴───────────────┐
+       ▼                               ▼
+┌─────────────┐                 ┌─────────────┐
+│  Validator  │ ...             │  Validator  │
+└─────────────┘                 └─────────────┘
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
 
-### Utilities
+## Monorepo Structure
 
-This Turborepo has some additional tools already setup for you:
+apps/
+ ├── api         # Express API for CRUD + queries
+ ├── frontend    # React/Next.js dashboard
+ ├── hub         # WebSocket hub server
+ └── validator   # Independent node client
+packages/
+ ├── common      # Shared types/interfaces
+ ├── db          # Prisma schema + client
+ ├── eslint-config / typescript-config
+ └── ui          # Shared UI components
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
 
-### Build
+## ⚡ Features
 
-To build all apps and packages, run the following command:
+- Add/remove websites via REST API.
+- Distributed validation from multiple validators worldwide.
+- Cryptographic signatures to ensure validator authenticity.
+- Database-backed history of uptime ticks.
+- Real-time health visualization via frontend.
+- Support for payouts / incentives to validators (tracked in DB).
 
-```
-cd my-turborepo
+---
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
+## 🚀 Getting Started
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
+### Prerequisites
+- [Bun](https://bun.sh/) or Node.js
+- Docker + Docker Compose (for Postgres)
+- Prisma CLI
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+### 1. Clone and install
+```bash
+git clone https://github.com/your-org/dpin-uptime.git
+cd dpin-uptime
+bun install
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+### 2. Start Postgres
+```bash
+docker-compose up -d
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+### 3. Run migrations
+```bash
+cd packages/db
+bunx prisma migrate dev
 
-### Develop
+### 4. Start services
+In separate terminals (or via pm2/tmux):
+```bash
+bun --cwd apps/api run index.ts
+bun --cwd apps/hub run index.ts
+bun --cwd apps/validator run index.ts
+bun --cwd apps/frontend dev
 
-To develop all apps and packages, run the following command:
 
-```
-cd my-turborepo
+## 🔑 Environment Variables
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+| Service   | Variable       | Description                              |
+|-----------|---------------|------------------------------------------|
+| API       | `DATABASE_URL` | Connection string for Postgres           |
+| Validator | `PRIVATE_KEY`  | JSON array of validator secret key bytes |
+| Validator | `HUB_WSS_URL`  | WebSocket endpoint for Hub               |
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+---
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+## 🛠️ Example Usage
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+### Add a Website
+```bash
+curl -X POST http://localhost:8001/api/v1/website \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"url":"https://example.com"}'
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+  ### Get Status
+```bash
+curl "http://localhost:8001/api/v1/website/status?websiteId=<id>" \
+  -H "Authorization: Bearer <token>"
 
-### Remote Caching
+  ## 📊 Database Schema (simplified)
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+- **User** → owns websites.
+- **Website** → monitored target.
+- **Validator** → registered node.
+- **WebsiteTick** → individual result from a validator.
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+---
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+## 🌍 Running Your Own Validator
 
-```
-cd my-turborepo
+Anyone can join the network by running a validator node.
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
+### Run via Docker
+```bash
+docker run -d --restart=always \
+  -e HUB_WSS_URL=wss://hub.yourdomain.com/ws \
+  -e PRIVATE_KEY='[11,22,...,64bytes]' \
+  -e VALIDATOR_TAGS='aws,ap-south-1' \
+  ghcr.io/your-org/dpin-validator:latest
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
+### From source
+```bash
+bun --cwd apps/validator run index.ts
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+## 🌍 Scaling Plan
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+- Validators run worldwide via Docker/Kubernetes.
+- Hub runs behind TLS (WSS) with Redis for coordination.
+- Consistent hashing used for task assignment.
+- Aggregated uptime metrics stored with retention policies.
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
+---
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
+## 🤝 Contributing
 
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+1. Fork the repo.
+2. Create a feature branch (`git checkout -b feat/my-feature`).
+3. Commit your changes (`git commit -m "feat: add X"`).
+4. Push and open a Pull Request.
+````
