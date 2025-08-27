@@ -42,6 +42,7 @@ This project provides a distributed network of validators that continuously moni
 
 ## Monorepo Structure
 
+```bash
 apps/
 ├── api # Express API for CRUD + queries
 ├── frontend # React/Next.js dashboard
@@ -52,6 +53,7 @@ packages/
 ├── db # Prisma schema + client
 ├── eslint-config / typescript-config
 └── ui # Shared UI components
+```
 
 ## ⚡ Features
 
@@ -74,33 +76,40 @@ packages/
 
 ### 1. Clone and install
 
-````bash
+```bash
 git clone https://github.com/your-org/dpin-uptime.git
 cd dpin-uptime
 bun install
+```
 
 ### 2. Start Postgres
+
 ```bash
 docker-compose up -d
+```
 
 ### 3. Run migrations
+
 ```bash
 cd packages/db
 bunx prisma migrate dev
+```
 
 ### 4. Start services
+
 In separate terminals (or via pm2/tmux):
+
 ```bash
 bun --cwd apps/api run index.ts
 bun --cwd apps/hub run index.ts
 bun --cwd apps/validator run index.ts
 bun --cwd apps/frontend dev
-
+```
 
 ## 🔑 Environment Variables
 
 | Service   | Variable       | Description                              |
-|-----------|---------------|------------------------------------------|
+| --------- | -------------- | ---------------------------------------- |
 | API       | `DATABASE_URL` | Connection string for Postgres           |
 | Validator | `PRIVATE_KEY`  | JSON array of validator secret key bytes |
 | Validator | `HUB_WSS_URL`  | WebSocket endpoint for Hub               |
@@ -110,18 +119,22 @@ bun --cwd apps/frontend dev
 ## 🛠️ Example Usage
 
 ### Add a Website
+
 ```bash
 curl -X POST http://localhost:8001/api/v1/website \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{"url":"https://example.com"}'
+```
 
-  ### Get Status
+### Get Status
+
 ```bash
 curl "http://localhost:8001/api/v1/website/status?websiteId=<id>" \
   -H "Authorization: Bearer <token>"
+```
 
-  ## 📊 Database Schema (simplified)
+## 📊 Database Schema (simplified)
 
 - **User** → owns websites.
 - **Website** → monitored target.
@@ -135,16 +148,20 @@ curl "http://localhost:8001/api/v1/website/status?websiteId=<id>" \
 Anyone can join the network by running a validator node.
 
 ### Run via Docker
+
 ```bash
 docker run -d --restart=always \
   -e HUB_WSS_URL=wss://hub.yourdomain.com/ws \
   -e PRIVATE_KEY='[11,22,...,64bytes]' \
   -e VALIDATOR_TAGS='aws,ap-south-1' \
   ghcr.io/your-org/dpin-validator:latest
+```
 
 ### From source
+
 ```bash
 bun --cwd apps/validator run index.ts
+```
 
 ## 🌍 Scaling Plan
 
@@ -161,4 +178,7 @@ bun --cwd apps/validator run index.ts
 2. Create a feature branch (`git checkout -b feat/my-feature`).
 3. Commit your changes (`git commit -m "feat: add X"`).
 4. Push and open a Pull Request.
-````
+
+```
+
+```
