@@ -39,10 +39,10 @@ const Testimonials = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
+          {testimonials.map((testimonial) => (
             <div
               key={testimonial.name}
-              className="bg-gray-50 dark:bg-gray-800 rounded-xl p-8 hover:shadow-lg dark:hover:shadow-gray-900/20 transition-shadow duration-300"
+              className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg"
             >
               <div className="flex items-center mb-4">
                 {[...Array(testimonial.rating)].map((_, i) => (
@@ -52,8 +52,8 @@ const Testimonials = () => {
               
               <div className="relative mb-6">
                 <Quote className="h-8 w-8 text-blue-600 dark:text-blue-400 opacity-20 absolute -top-2 -left-2" />
-                <p className="text-gray-700 dark:text-gray-300 italic leading-relaxed">
-                  "{testimonial.content}"
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  &ldquo;{testimonial.content}&rdquo;
                 </p>
               </div>
 

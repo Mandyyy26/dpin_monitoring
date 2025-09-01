@@ -134,7 +134,7 @@ function App() {
       return [];
     }
     
-    return websites.map((website: { ticks: any; id: any; url: any; }) => {
+    return websites.map((website: { ticks: { status: string; createdAt: string }[]; id: string; url: string; }) => {
       // Sort ticks by creation time
       const sortedTicks = [...website.ticks].sort((a, b) => 
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
