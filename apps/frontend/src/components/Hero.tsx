@@ -12,7 +12,7 @@ const Hero = () => {
           </div>
           
           <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
-            Monitor Your Website's
+            Monitor Your Websites
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-emerald-600 dark:from-blue-400 dark:to-emerald-400"> Uptime</span>
           </h1>
           
